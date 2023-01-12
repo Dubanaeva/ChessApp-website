@@ -20,8 +20,8 @@ for(let p = 0; p < 2; p++){
     pieces.push({image: `assets/images/${type}_horse.png` , x: 6, y });
     pieces.push({image: `assets/images/${type}_elephant.png` , x: 2, y });
     pieces.push({image: `assets/images/${type}_elephant.png` , x: 5, y });
-    pieces.push({image: `assets/images/${type}_queen.png` , x: 3, y });
-    pieces.push({image: `assets/images/${type}_ferz.png` , x: 4, y });
+    pieces.push({image: `assets/images/${type}_queen.png` , x: 4, y });
+    pieces.push({image: `assets/images/${type}_ferz.png` , x: 3, y });
 
 }
 
@@ -34,6 +34,36 @@ for(let i = 0; i < 8; i++){
 for(let i = 0; i < 8; i++){
     pieces.push({image: "assets/images/white_peshka.png" , x: i, y: 1});
 }
+
+let activePiece: HTMLElement | null = null;
+function grabPiece(e: React.MouseEvent){
+    const element = e.target as HTMLElement;
+    if(element.classList.contains("chess-piece")){
+
+        console.log(e);
+
+        const x = e.clientX - 50;
+        const y = e.clientY - 50;
+        element.style.position = "absolute";
+        element.style.left = `${x}px`
+        element.style.top = `${y}px`
+
+        activePiece = element;
+    }
+}
+ function movePiece(e: React.MouseEvent){
+    if(activePiece){
+        const x = e.clientX - 50;
+        const y = e.clientY - 50;
+        activePiece.style.position = "absolute";
+        activePiece.style.left = `${x}px`
+        activePiece.style.top = `${y}px`
+    }
+ }
+ function dropPiece(e: React.MouseEvent){
+    activePiece = null;
+    
+ }
 
 export default function Chessboard(){
     let board = [];
@@ -50,9 +80,16 @@ export default function Chessboard(){
             });
 
             board.push(
-            <Tile image={image} number={number} />
+            <Tile key={`${j}, ${i}`} image={image} number={number} />
             );
         }
     }
-    return <div id="chessboard">{board}</div>;
+    return <div
+        onMouseMove={(e) => movePiece(e)}
+        onMouseDown={(e) => grabPiece(e)} 
+        onMouseUp={(e) => dropPiece(e)}
+        id="chessboard"
+        >
+        {board}
+        </div>;
 }
